@@ -16,8 +16,11 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
+Route.on('/').render('welcome')
 
-//Coach
+//Equipment
+Route.get('equipment', 'EquipmentController.index')
+    //Coach
 Route.post('coach/register', 'CoachController.store')
 Route.post('api/v1/coach/login', 'CoachController.login')
 Route.group(() => {
@@ -29,5 +32,6 @@ Route.post('api/v1/user/login', 'UserController.login')
 Route.group(() => {
     Route.get('user/:id', 'UserController.show')
     Route.put('user/:id', 'UserController.update')
+    Route.get('equipment', 'EquipmentController.index')
 }).prefix('api/v1').middleware('auth')
 Route.get('user/test', 'UserController.test')

@@ -75,6 +75,16 @@ module.exports = {
             secret: Env.get('APP_KEY')
         }
     },
+    coach: {
+        serializer: 'lucid',
+        model: 'App/Models/Coach',
+        scheme: 'jwt',
+        uid: 'email',
+        password: 'password',
+        options: {
+            secret: Env.get('APP_KEY')
+        }
+    },
 
     /*
     |--------------------------------------------------------------------------

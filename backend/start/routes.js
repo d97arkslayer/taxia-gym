@@ -18,7 +18,9 @@ const Route = use('Route')
 
 Route.on('/').render('welcome')
 
-//Equipment
+//Muscles
+Route.get('muscles', 'MuscleController.index')
+    //Equipment
 Route.get('equipment', 'EquipmentController.index')
     //Coach
 Route.post('coach/register', 'CoachController.store')

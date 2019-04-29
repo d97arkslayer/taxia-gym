@@ -34,7 +34,7 @@ class EquipmentController {
             let array = []
             for (let item of results) {
                 let url = await this.photosUnplash(item)
-                array.push({ equipment_id: item.id, name: item.name, url_image: url })
+                array.push({ id: item.id, name: item.name, url_image: url })
             }
             await Equipment.createMany(array)
         } catch (error) {

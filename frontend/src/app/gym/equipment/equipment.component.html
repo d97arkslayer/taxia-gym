@@ -1,0 +1,13 @@
+<div class="container">
+    <div class="card-columns">
+        <div class="card" *ngFor="let equipment of arrayEquipment | async">
+            <img src="{{equipment.url_image}}" alt="{{equipment.name}}" class="card-img-top">
+            <div class="card-body">
+                <h5 class="card-title">
+                    {{equipment.name}}
+                </h5>
+            </div>
+        </div>
+    </div>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+</div>

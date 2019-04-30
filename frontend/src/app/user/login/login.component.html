@@ -1,0 +1,28 @@
+<h2 class="login-title"> Taxia GYM</h2>
+<div class="signin-content">
+    <mat-card>
+        <mat-card-content>
+            <form autocomplete="off" [formGroup]="form" (ngSubmit)="onSubmit()">
+                <p>A continuación ingrese sus credenciales de acceso</p>
+                <mat-form-field class="full-width-input" appearance="legacy">
+                    <mat-label>Usuario</mat-label>
+                    <input autocomplete="off" matInput placeholder="example@example.com" formControlName="email" required>
+                    <mat-error *ngIf="isFieldInvalid('email')">{{getErrorMessageEmail()}}</mat-error>
+                    <mat-icon matSuffix>face</mat-icon>
+                    <mat-hint>Ingrese su usuario</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field class="full-width-input" appearance="legacy">
+                    <mat-label>Contraseña</mat-label>
+                    <input autocomplete="off" matInput type="password" formControlName="password" required>
+                    <mat-icon matSuffix>lock</mat-icon>
+                    <mat-hint>Ingrese su contraseña</mat-hint>
+                </mat-form-field>
+                <mat-card-actions>
+                    <button mat-raised-button color="primary" type="submit" [disabled]="!isValidForm()">Ingresar</button>
+                </mat-card-actions>
+                <a [routerLink]="['/signUp']">¿No tienes usuario? Registrate</a>
+            </form>
+        </mat-card-content>
+    </mat-card>
+</div>

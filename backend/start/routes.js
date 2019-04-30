@@ -17,8 +17,7 @@
 const Route = use('Route')
 
 Route.on('/').render('welcome')
-
-// Images
+    // Images
 Route.get('images', 'ImageController.index')
     //Excercises
 Route.get('excercises', 'ExcerciseController.index')
@@ -30,6 +29,9 @@ Route.get('excercises/rutine/:id', 'ExcerciseController.rutine')
 //Muscles
 Route.get('muscles', 'MuscleController.index')
 Route.get('muscles/rutine', 'MuscleController.rutine')
+
+//Ingredients
+Route.get('ingredients', 'IngredientController.index')
     //Equipment
 Route.get('equipment', 'EquipmentController.index')
     //Coach
@@ -50,5 +52,6 @@ Route.group(() => {
     Route.get('excercises/secondary', 'ExcerciseController.secondaryMuscles')
     Route.get('excercises/rutine/:id', 'ExcerciseController.rutine')
     Route.get('muscles/rutine', 'MuscleController.rutine')
+    Route.get('ingredients', 'IngredientController.index')
 }).prefix('api/v1').middleware('auth')
 Route.get('user/test', 'UserController.test')

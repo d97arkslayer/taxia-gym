@@ -11,6 +11,7 @@ const axios = require('axios')
 const Excercise = use('App/Models/Excercise')
 const ExcerciseMuscle = use('App/Models/ExcerciseMuscle')
 const Muscle = use('App/Models/Muscle')
+const Image = use('App/Models/Image')
 class ExcerciseController {
     /**
      * Show a list of all excercises.
@@ -96,7 +97,7 @@ class ExcerciseController {
 
 
     async rutine({ params, response, request }) {
-        const excercisesAll = await Excercise.query().with('excerciseMuscles').fetch()
+        const excercisesAll = await Excercise.query().with('excerciseMuscles').with('images').fetch()
         const excercises = excercisesAll.toJSON().filter((excercise) => {
             const id = params.id
             const r = this.isForMuscle(excercise.excerciseMuscles, id)

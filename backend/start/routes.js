@@ -18,8 +18,18 @@ const Route = use('Route')
 
 Route.on('/').render('welcome')
 
+// Images
+Route.get('images', 'ImageController.index')
+    //Excercises
+Route.get('excercises', 'ExcerciseController.index')
+Route.get('excercises/test', 'ExcerciseController.excerciseWithOutMuscle')
+Route.get('excercises/images', 'ExcerciseController.excerciseWithImages')
+Route.get('excercises/secondary', 'ExcerciseController.secondaryMuscles')
+Route.get('excercises/rutine/:id', 'ExcerciseController.rutine')
+
 //Muscles
 Route.get('muscles', 'MuscleController.index')
+Route.get('muscles/rutine', 'MuscleController.rutine')
     //Equipment
 Route.get('equipment', 'EquipmentController.index')
     //Coach
@@ -35,5 +45,10 @@ Route.group(() => {
     Route.get('user/:id', 'UserController.show')
     Route.put('user/:id', 'UserController.update')
     Route.get('equipment', 'EquipmentController.index')
+    Route.get('muscles', 'MuscleController.index')
+    Route.get('excercises/withoutmuscle', 'ExcerciseController.excerciseWithOutMuscle')
+    Route.get('excercises/secondary', 'ExcerciseController.secondaryMuscles')
+    Route.get('excercises/rutine/:id', 'ExcerciseController.rutine')
+    Route.get('muscles/rutine', 'MuscleController.rutine')
 }).prefix('api/v1').middleware('auth')
 Route.get('user/test', 'UserController.test')

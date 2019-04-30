@@ -19,14 +19,16 @@ class IngredientController {
      * @param {Response} ctx.response
      * @param {View} ctx.view
      */
+    //Se valida si existen registros en la base de datos, sino se proceder a consumir la api y a llenar la base de datos
     async index({ request, response, view }) {
-        let ingredients = await Ingredient.all()
-        if (ingredients.rows.length < 1) {
-            await this.createData()
-            ingredients = await Ingredient.all()
+            let ingredients = await Ingredient.all()
+            if (ingredients.rows.length < 1) {
+                await this.createData()
+                ingredients = await Ingredient.all()
+            }
+            response.status(200).json(ingredients)
         }
-        response.status(200).json(ingredients)
-    }
+        //Hace la petición a la api recorre los resultados y los almacena en base de datos
     async createData() {
         try {
             let ingredients = await axios.get('https://wger.de/api/v2/ingredient?limit=2000&ordering=id,energy')

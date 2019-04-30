@@ -20,7 +20,10 @@ class UserController {
      * @param {Response} ctx.response
      * @param {View} ctx.view
      */
-    async index({ request, response, view }) {}
+    async index({ request, response, view }) {
+        const users = await User.all()
+        response.status(200).json(users)
+    }
 
     /**
      * Render a form to be used for creating a new user.
@@ -86,6 +89,7 @@ class UserController {
      * @param {Request} ctx.request
      * @param {Response} ctx.response
      */
+    //Cada que se actualiza el peso del usuario recalcula el imc
     async update({ params, request, response }) {
         const { name, lastname, password, weight, height, profession } = request.post()
         const user = await User.find(params.id)
@@ -115,31 +119,20 @@ class UserController {
      * @param {Response} ctx.response
      */
     async destroy({ params, request, response }) {
-        const user = await User.find(params.id)
-        if (!user) {
-            return response.status(404)
+            const user = await User.find(params.id)
+            if (!user) {
+                return response.status(404)
+            }
+            await user.delete()
+            response.status(201)
         }
-        await user.delete()
-        response.status(201)
-    }
-
+        //Logueo del usuario
     async login({ auth, request, response }) {
-        const { email, password } = request.all()
-        const token = await auth.withRefreshToken().attempt(email, password)
-        response.status(200).json(token)
-    }
-
-    async test({ request, response }) {
-        const muscles = await axios.get('https://wger.de/api/v2/muscle/')
-            .then(response => response.data)
-            .catch(error => {
-                console.log(error);
-            });
-
-        console.log(muscles)
-
-    }
-
+            const { email, password } = request.all()
+            const token = await auth.withRefreshToken().attempt(email, password)
+            response.status(200).json(token)
+        }
+        //Calcula el imc y lo redondea a dos decimales
     async calculateIMC(weight, height) {
         return (weight / (height * height)).toFixed(2)
     }

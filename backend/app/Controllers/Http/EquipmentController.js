@@ -19,31 +19,31 @@ class EquipmentController {
      * @param {Response} ctx.response
      * @param {View} ctx.view
      */
+    //Valida si hay equipos sino hay se consume la api y se llena 
     async index({ request, response, view }) {
-        let equipments = await Equipment.all()
-        if (equipments.rows.length < 1) {
-            await this.createData()
-        }
-        equipments = await Equipment.all()
-        response.status(200).json(equipments)
-    }
-    async createData() {
-        try {
-            const apiEquipments = await axios.get('https://wger.de/api/v2/equipment/')
-            const { results } = apiEquipments.data
-            let array = []
-            for (let item of results) {
-                let url = await this.photosUnplash(item)
-                array.push({ id: item.id, name: item.name, url_image: url })
+            let equipments = await Equipment.all()
+            if (equipments.rows.length < 1) {
+                await this.createData()
             }
-            await Equipment.createMany(array)
-        } catch (error) {
-            console.log(error)
+            equipments = await Equipment.all()
+            response.status(200).json(equipments)
         }
-
-
-
-    }
+        //Va a la api de equipos los recorre y los guarda en base de datos
+    async createData() {
+            try {
+                const apiEquipments = await axios.get('https://wger.de/api/v2/equipment/')
+                const { results } = apiEquipments.data
+                let array = []
+                for (let item of results) {
+                    let url = await this.photosUnplash(item)
+                    array.push({ id: item.id, name: item.name, url_image: url })
+                }
+                await Equipment.createMany(array)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        //Trae los equipos y les asigna una imagen aleatoria de unplash buscada con el nombre de la maquina
     async photosUnplash(item) {
         return await axios.get('https://api.unsplash.com/search/photos?client_id=a3a865051f02bb99d25614343694acd730df8bdae7be2b6834d1dac701dfcc85&page=1&query=' + item.name)
             .then(async(response) => {

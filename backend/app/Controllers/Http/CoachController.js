@@ -6,9 +6,11 @@
 
 /**
  * Resourceful controller for interacting with coaches
+ *
  */
 
 const Coach = use('App/Models/Coach')
+    //Hecho para el manejo de perfiles
 class CoachController {
     /**
      * Show a list of all coaches.

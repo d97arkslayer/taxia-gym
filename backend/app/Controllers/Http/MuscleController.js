@@ -5,61 +5,70 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 /**
- * Resourceful controller for interacting with images
+ * Resourceful controller for interacting with muscles
  */
+const Muscle = use('App/Models/Muscle')
 const axios = require('axios')
-const Excercise = use('App/Models/Excercise')
-const Image = use('App/Models/Image')
-class ImageController {
+class MuscleController {
     /**
-     * Show a list of all images.
-     * GET images
+     * Show a list of all muscles.
+     * GET muscles
      *
      * @param {object} ctx
      * @param {Request} ctx.request
      * @param {Response} ctx.response
      * @param {View} ctx.view
      */
+    //Se hace una comprobacion de si existen registros en la base de datos sino se procede a consumir la información de la api
     async index({ request, response, view }) {
-        let images = await Image.all()
-        if (images.rows.length < 1) {
-            await this.getImages()
-            images = await Image.all()
-        }
-        response.status(200).json(images)
-
-    }
-    async getImages() {
-        try {
-            let apiImages = await axios.get('https://wger.de/api/v2/exerciseimage/')
-            let { results, next } = apiImages.data
-            const array = []
-            while (next !== null) {
-                for (const result of results) {
-                    const { exercise, image } = result
-                    const excercise = await Excercise.find(exercise)
-                    if (excercise) {
-                        array.push({ excercise_id: exercise, url: image })
-                    }
-                }
-                try {
-                    apiImages = await axios.get(next)
-                    results = apiImages.data.results
-                    next = apiImages.data.next
-                } catch (error) {
-                    console.log
-                }
+            let muscles = await Muscle.all()
+            if (muscles.rows.length < 1) {
+                await this.createMuscles()
             }
-            await Image.createMany(array)
-
-        } catch (error) {
-
+            muscles = await Muscle.all()
+            response.status(200).json(muscles)
         }
+        //Consume los musculos desde la api los recorre y almacena en base de datos
+    async createMuscles() {
+            try {
+                const petition = await axios.get('https://wger.de/api/v2/muscle/')
+                const muscles = petition.data.results
+                const array = []
+                for (const muscle of muscles) {
+                    const { id, name } = muscle
+                    array.push({ id, name })
+                }
+                await Muscle.createMany(array)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        //Devuelve 3 musculos aleatorios
+    async rutine({ params, request, response }) {
+        const idMuscles = []
+        idMuscles.push(Math.floor(Math.random() * (15 - 1) + 1))
+        idMuscles.push(Math.floor(Math.random() * (15 - 1) + 1))
+        if (idMuscles[1] === idMuscles[0]) {
+            idMuscles[1] = Math.floor(Math.random() * (15 - 1) + 1)
+        }
+        idMuscles.push(Math.floor(Math.random() * (15 - 1) + 1))
+        while (idMuscles[2] === idMuscles[0] || idMuscles[2] === idMuscles[1]) {
+            idMuscles[2] = Math.floor(Math.random() * (15 - 1) + 1)
+        }
+        const muscles = []
+        for (const item of idMuscles) {
+            //const muscle = await Muscle.query().with('excerciseMuscles').where('id', item).fetch()
+            const muscle = await Muscle.find(item)
+            const muscle1 = await muscle.excerciseMuscles().fetch()
+            console.log(muscle1.toJSON())
+            muscles.push(muscle)
+        }
+        response.status(200).json(muscles)
     }
 
     /**
-     * Render a form to be used for creating a new image.
-     * GET images/create
+     * Render a form to be used for creating a new muscle.
+     * GET muscles/create
      *
      * @param {object} ctx
      * @param {Request} ctx.request
@@ -69,8 +78,8 @@ class ImageController {
     async create({ request, response, view }) {}
 
     /**
-     * Create/save a new image.
-     * POST images
+     * Create/save a new muscle.
+     * POST muscles
      *
      * @param {object} ctx
      * @param {Request} ctx.request
@@ -79,8 +88,8 @@ class ImageController {
     async store({ request, response }) {}
 
     /**
-     * Display a single image.
-     * GET images/:id
+     * Display a single muscle.
+     * GET muscles/:id
      *
      * @param {object} ctx
      * @param {Request} ctx.request
@@ -90,8 +99,8 @@ class ImageController {
     async show({ params, request, response, view }) {}
 
     /**
-     * Render a form to update an existing image.
-     * GET images/:id/edit
+     * Render a form to update an existing muscle.
+     * GET muscles/:id/edit
      *
      * @param {object} ctx
      * @param {Request} ctx.request
@@ -101,8 +110,8 @@ class ImageController {
     async edit({ params, request, response, view }) {}
 
     /**
-     * Update image details.
-     * PUT or PATCH images/:id
+     * Update muscle details.
+     * PUT or PATCH muscles/:id
      *
      * @param {object} ctx
      * @param {Request} ctx.request
@@ -111,8 +120,8 @@ class ImageController {
     async update({ params, request, response }) {}
 
     /**
-     * Delete a image with id.
-     * DELETE images/:id
+     * Delete a muscle with id.
+     * DELETE muscles/:id
      *
      * @param {object} ctx
      * @param {Request} ctx.request
@@ -121,4 +130,4 @@ class ImageController {
     async destroy({ params, request, response }) {}
 }
 
-module.exports = ImageController
+module.exports = MuscleController

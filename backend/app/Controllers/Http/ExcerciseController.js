@@ -22,44 +22,45 @@ class ExcerciseController {
      * @param {Response} ctx.response
      * @param {View} ctx.view
      */
+    //Entrega los ejercicios, sino hay ejercicios registrados se hace la peticion a la api
     async index({ request, response, view }) {
-        let excercises = await Excercise.all()
-        if (excercises.rows.length < 1) {
-            await this.createData()
-            await this.getImages()
-            excercises = await Excercise.all()
+            let excercises = await Excercise.all()
+            if (excercises.rows.length < 1) {
+                await this.createData()
+                await this.getImages()
+                excercises = await Excercise.all()
+            }
+            response.status(200).json(excercises)
         }
-        response.status(200).json(excercises)
-    }
-
+        //Obtiene las imagenes correspondientes al ejercicio desde la api de WGER
     async getImages() {
-        try {
-            let apiImages = await axios.get('https://wger.de/api/v2/exerciseimage/')
-            let { results, next } = apiImages.data
-            const array = []
-            while (next !== null) {
-                for (const result of results) {
-                    const { exercise, image } = result
-                    const excercise = await Excercise.find(exercise)
-                    if (excercise) {
-                        array.push({ excercise_id: exercise, url: image })
+            try {
+                let apiImages = await axios.get('https://wger.de/api/v2/exerciseimage/')
+                let { results, next } = apiImages.data
+                const array = []
+                while (next !== null) {
+                    for (const result of results) {
+                        const { exercise, image } = result
+                        const excercise = await Excercise.find(exercise)
+                        if (excercise) {
+                            array.push({ excercise_id: exercise, url: image })
+                        }
+                    }
+                    try {
+                        apiImages = await axios.get(next)
+                        results = apiImages.data.results
+                        next = apiImages.data.next
+                    } catch (error) {
+                        console.log
                     }
                 }
-                try {
-                    apiImages = await axios.get(next)
-                    results = apiImages.data.results
-                    next = apiImages.data.next
-                } catch (error) {
-                    console.log
-                }
+                await Image.createMany(array)
+
+            } catch (error) {
+
             }
-            await Image.createMany(array)
-
-        } catch (error) {
-
         }
-    }
-
+        //Obtiene todos los ejercicios y los guarda en base de datos
     async createData() {
         try {
             let apiExcercises = await axios.get('https://wger.de/api/v2/exercise/')
@@ -95,7 +96,7 @@ class ExcerciseController {
         }
     }
 
-
+    //Obtiene todos los ejercicios para un musculo en especifico 
     async rutine({ params, response, request }) {
         const excercisesAll = await Excercise.query().with('excerciseMuscles').with('images').fetch()
         const excercises = excercisesAll.toJSON().filter((excercise) => {
@@ -178,22 +179,22 @@ class ExcerciseController {
      * @param {Response} ctx.response
      */
     async destroy({ params, request, response }) {}
-
+        //Devuelve todos  los ejercicios sin musculo asociado
     async excerciseWithOutMuscle({ params, request, response }) {
-        const excercises = await Excercise.query().with('excerciseMuscles').with('images').fetch()
-        const rows = excercises.toJSON()
-        const excerciseWithOutMuscle = rows.filter((row) => {
-            return row.excerciseMuscles.length < 1
-        })
+            const excercises = await Excercise.query().with('excerciseMuscles').with('images').fetch()
+            const rows = excercises.toJSON()
+            const excerciseWithOutMuscle = rows.filter((row) => {
+                return row.excerciseMuscles.length < 1
+            })
 
-        response.status(200).json(excerciseWithOutMuscle)
-    }
-
+            response.status(200).json(excerciseWithOutMuscle)
+        }
+        //Retorna todos los ejercicios con imagenes
     async excerciseWithImages({ params, request, response }) {
-        const excercises = await Excercise.query().with('images').fetch()
-        response.status(200).json(excercises)
-    }
-
+            const excercises = await Excercise.query().with('images').fetch()
+            response.status(200).json(excercises)
+        }
+        //Retorna todos los ejercicios que trabajan un musculo secundario
     async secondaryMuscles({ params, request, response }) {
         const excercises = await Excercise.query().with('excerciseMuscles').with('images').fetch()
         const secondary = excercises.toJSON().filter((excercise) => {

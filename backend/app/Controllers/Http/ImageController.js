@@ -20,15 +20,18 @@ class ImageController {
      * @param {Response} ctx.response
      * @param {View} ctx.view
      */
-    async index({ request, response, view }) {
-        let images = await Image.all()
-        if (images.rows.length < 1) {
-            await this.getImages()
-            images = await Image.all()
-        }
-        response.status(200).json(images)
 
-    }
+    //Valida si hay imagenes sino va y las consume desde la api y la idexa
+    async index({ request, response, view }) {
+            let images = await Image.all()
+            if (images.rows.length < 1) {
+                await this.getImages()
+                images = await Image.all()
+            }
+            response.status(200).json(images)
+
+        }
+        //obtiene las imagenes desde la api
     async getImages() {
         try {
             let apiImages = await axios.get('https://wger.de/api/v2/exerciseimage/')

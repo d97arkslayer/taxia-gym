@@ -25,7 +25,7 @@ Route.group(() => {
 Route.get('images', 'ImageController.index')
     //Excercises
 Route.get('excercises', 'ExcerciseController.index')
-Route.get('excercises/test', 'ExcerciseController.excerciseWithOutMuscle')
+Route.get('excercises/withOutMuscle', 'ExcerciseController.excerciseWithOutMuscle')
 Route.get('excercises/images', 'ExcerciseController.excerciseWithImages')
 Route.get('excercises/secondary', 'ExcerciseController.secondaryMuscles')
 Route.get('excercises/rutine/:id', 'ExcerciseController.rutine')
@@ -47,8 +47,9 @@ Route.group(() => {
     //User
     //Registrar Usuario
 Route.post('user/register', 'UserController.store')
-    //Loguear un usuarii
+    //Loguear un usuario
 Route.post('api/v1/user/login', 'UserController.login')
+    //Rutas autenticadas
 Route.group(() => {
     Route.get('user/:id', 'UserController.show')
     Route.put('user/:id', 'UserController.update')
